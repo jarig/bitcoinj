@@ -372,6 +372,10 @@ public class Wallet extends BaseTaggableObject
         createTransientState();
     }
 
+    public void clearSigners() {
+        signers.clear();
+    }
+
     private void createTransientState() {
         ignoreNextNewBlock = new HashSet<>();
         txConfidenceListener = new TransactionConfidence.Listener() {
