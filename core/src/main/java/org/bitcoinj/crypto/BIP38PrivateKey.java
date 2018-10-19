@@ -23,8 +23,8 @@ import com.lambdaworks.crypto.SCrypt;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.text.Normalizer;
 import java.util.Arrays;
@@ -117,7 +117,7 @@ public class BIP38PrivateKey extends PrefixedChecksummedBytes {
     public ECKey decrypt(String passphrase) throws BadPassphraseException {
         String normalizedPassphrase = Normalizer.normalize(passphrase, Normalizer.Form.NFC);
         ECKey key = ecMultiply ? decryptEC(normalizedPassphrase) : decryptNoEC(normalizedPassphrase);
-        Sha256Hash hash = Sha256Hash.twiceOf(LegacyAddress.fromKey(params, key).toString().getBytes(StandardCharsets.US_ASCII));
+        Sha256Hash hash = Sha256Hash.twiceOf(LegacyAddress.fromKey(params, key).toString().getBytes());
         byte[] actualAddressHash = Arrays.copyOfRange(hash.getBytes(), 0, 4);
         if (!Arrays.equals(actualAddressHash, addressHash))
             throw new BadPassphraseException();
@@ -126,7 +126,7 @@ public class BIP38PrivateKey extends PrefixedChecksummedBytes {
 
     private ECKey decryptNoEC(String normalizedPassphrase) {
         try {
-            byte[] derived = SCrypt.scrypt(normalizedPassphrase.getBytes(StandardCharsets.UTF_8), addressHash, 16384, 8, 8, 64);
+            byte[] derived = SCrypt.scrypt(normalizedPassphrase.getBytes("UTF-8"), addressHash, 16384, 8, 8, 64);
             byte[] key = Arrays.copyOfRange(derived, 32, 64);
             SecretKeySpec keyspec = new SecretKeySpec(key, "AES");
 
@@ -138,7 +138,7 @@ public class BIP38PrivateKey extends PrefixedChecksummedBytes {
             for (int i = 0; i < 32; i++)
                 decrypted[i] ^= derived[i];
             return ECKey.fromPrivate(decrypted, compressed);
-        } catch (GeneralSecurityException x) {
+        } catch (GeneralSecurityException | UnsupportedEncodingException x) {
             throw new RuntimeException(x);
         }
     }
@@ -148,7 +148,7 @@ public class BIP38PrivateKey extends PrefixedChecksummedBytes {
             byte[] ownerEntropy = Arrays.copyOfRange(content, 0, 8);
             byte[] ownerSalt = hasLotAndSequence ? Arrays.copyOfRange(ownerEntropy, 0, 4) : ownerEntropy;
 
-            byte[] passFactorBytes = SCrypt.scrypt(normalizedPassphrase.getBytes(StandardCharsets.UTF_8), ownerSalt, 16384, 8, 8, 32);
+            byte[] passFactorBytes = SCrypt.scrypt(normalizedPassphrase.getBytes("UTF-8"), ownerSalt, 16384, 8, 8, 32);
             if (hasLotAndSequence) {
                 byte[] hashBytes = Bytes.concat(passFactorBytes, ownerEntropy);
                 checkState(hashBytes.length == 40);
@@ -186,7 +186,7 @@ public class BIP38PrivateKey extends PrefixedChecksummedBytes {
             BigInteger priv = passFactor.multiply(seedFactor).mod(ECKey.CURVE.getN());
 
             return ECKey.fromPrivate(priv, compressed);
-        } catch (GeneralSecurityException x) {
+        } catch (GeneralSecurityException | UnsupportedEncodingException x) {
             throw new RuntimeException(x);
         }
     }

@@ -24,7 +24,6 @@ import javax.annotation.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.locks.*;
 
@@ -143,7 +142,7 @@ public class SPVBlockStore implements BlockStore {
             if (exists) {
                 byte[] header = new byte[4];
                 buffer.get(header);
-                if (!new String(header, StandardCharsets.US_ASCII).equals(HEADER_MAGIC))
+                if (!new String(header).equals(HEADER_MAGIC))
                     throw new BlockStoreException("Header bytes do not equal " + HEADER_MAGIC);
             } else {
                 initNewStore(params);

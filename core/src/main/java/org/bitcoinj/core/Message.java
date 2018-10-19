@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -349,7 +349,11 @@ public abstract class Message {
 
     protected String readStr() throws ProtocolException {
         long length = readVarInt();
-        return length == 0 ? "" : new String(readBytes((int) length), StandardCharsets.UTF_8); // optimization for empty strings
+        try {
+            return length == 0 ? "" : new String(readBytes((int) length), "UTF-8"); // optimization for empty strings
+        } catch ( UnsupportedEncodingException ex) {
+            return "";
+        }
     }
 
     protected Sha256Hash readHash() throws ProtocolException {

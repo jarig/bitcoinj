@@ -94,7 +94,6 @@ import java.io.*;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -266,7 +265,7 @@ public class WalletTool {
 
         if (args.length == 0 || options.has("help") ||
                 options.nonOptionArguments().size() < 1 || options.nonOptionArguments().contains("help")) {
-            System.out.println(Resources.toString(WalletTool.class.getResource("wallet-tool-help.txt"), StandardCharsets.UTF_8));
+            // System.out.println(Resources.toString(WalletTool.class.getResource("wallet-tool-help.txt"), "UTF-8"));
             return;
         }
 

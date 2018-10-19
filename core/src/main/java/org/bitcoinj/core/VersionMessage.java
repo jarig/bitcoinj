@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 /**
@@ -167,7 +166,7 @@ public class VersionMessage extends Message {
             Utils.uint32ToByteStreamLE(0, buf);
             Utils.uint32ToByteStreamLE(0, buf);
             // Now comes subVer.
-            byte[] subVerBytes = subVer.getBytes(StandardCharsets.UTF_8);
+            byte[] subVerBytes = subVer.getBytes("UTF-8");
             buf.write(new VarInt(subVerBytes.length).encode());
             buf.write(subVerBytes);
             // Size of known block chain.

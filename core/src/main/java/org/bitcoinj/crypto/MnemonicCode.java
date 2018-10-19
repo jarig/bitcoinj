@@ -29,7 +29,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,7 +87,7 @@ public class MnemonicCode {
      * is supplied the digest of the words will be checked.
      */
     public MnemonicCode(InputStream wordstream, String wordListDigest) throws IOException, IllegalArgumentException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(wordstream, StandardCharsets.UTF_8));
+        BufferedReader br = new BufferedReader(new InputStreamReader(wordstream, "UTF-8"));
         this.wordList = new ArrayList<>(2048);
         MessageDigest md = Sha256Hash.newDigest();
         String word;
