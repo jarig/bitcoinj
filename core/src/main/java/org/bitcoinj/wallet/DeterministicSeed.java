@@ -26,7 +26,7 @@ import org.spongycastle.crypto.params.KeyParameter;
 
 import javax.annotation.Nullable;
 
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -189,7 +189,11 @@ public class DeterministicSeed implements EncryptableItem {
     }
 
     private byte[] getMnemonicAsBytes() {
-        return Utils.SPACE_JOINER.join(mnemonicCode).getBytes(StandardCharsets.UTF_8);
+        try {
+            return Utils.SPACE_JOINER.join(mnemonicCode).getBytes("UTF-8");
+        } catch(UnsupportedEncodingException x) {
+            throw new RuntimeException(x);
+        }
     }
 
     public DeterministicSeed decrypt(KeyCrypter crypter, String passphrase, KeyParameter aesKey) {
@@ -237,7 +241,11 @@ public class DeterministicSeed implements EncryptableItem {
     }
 
     private static List<String> decodeMnemonicCode(byte[] mnemonicCode) {
-        return decodeMnemonicCode(new String(mnemonicCode, StandardCharsets.UTF_8));
+        try {
+            return decodeMnemonicCode(new String(mnemonicCode, "UTF-8"));
+        } catch(UnsupportedEncodingException x) {
+            throw new RuntimeException(x);
+        }
     }
 
     private static List<String> decodeMnemonicCode(String mnemonicCode) {

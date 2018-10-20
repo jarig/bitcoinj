@@ -37,7 +37,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -156,7 +155,7 @@ public class CheckpointManager {
         Hasher hasher = Hashing.sha256().newHasher();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII));
+            reader = new BufferedReader(new InputStreamReader(inputStream));
             String magic = reader.readLine();
             if (!TEXTUAL_MAGIC.equals(magic))
                 throw new IOException("unexpected magic: " + magic);
